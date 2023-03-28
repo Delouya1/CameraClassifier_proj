@@ -78,3 +78,34 @@ class App:
         img.save(f'{class_number}/{self.counters[class_number - 1]}.jpg')
 
         self.counters[class_number - 1] += 1  # increment the counter
+
+    def reset(self):
+        for directory in ["1", "2"]:
+            for file in os.listdir(directory):  # iterate over the files in the directory
+                file_path = os.path.join(directory, file)  # get the full path of the file
+                try:
+                    if os.path.isfile(file_path):  # if the file is a file
+                        os.unlink(file_path)  # delete the file
+                except Exception as e:
+                    print(e)
+        self.counters = [1, 1]  # reset the counters
+        # self.model = model.Model() # reset the model
+
+    def update(self):
+        if self.auto_predict:
+            self.predict()
+            pass
+
+        ret, frame = self.camera.get_frame()  # get the current frame from the camera
+        if ret:
+            self.photo = PIL.ImageTk.PhotoImage(image=PIL.Image.fromarray(frame))  # convert the image to PIL format
+            self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)  # add the image to the canvas in the
+            # upper left corner
+
+        self.window.after(self.delay, self.update)  # call the update function again after the delay
+
+
+
+
+
+
